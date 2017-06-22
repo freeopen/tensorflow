@@ -16,6 +16,7 @@ limitations under the License.
 #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
+#define EIGEN_HAS_VARIADIC_TEMPLATES 0
 
 #include "tensorflow/core/kernels/softmax_op_functor.h"
 
