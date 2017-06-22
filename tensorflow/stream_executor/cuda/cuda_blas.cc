@@ -1912,8 +1912,7 @@ bool CUDABlas::GetBlasGemmAlgorithms(
 #if CUDA_VERSION >= 8000
   for (cublasGemmAlgo_t algo :
        {CUBLAS_GEMM_DFALT, CUBLAS_GEMM_ALGO0, CUBLAS_GEMM_ALGO1,
-        CUBLAS_GEMM_ALGO2, CUBLAS_GEMM_ALGO3, CUBLAS_GEMM_ALGO4,
-        CUBLAS_GEMM_ALGO5, CUBLAS_GEMM_ALGO6, CUBLAS_GEMM_ALGO7}) {
+        CUBLAS_GEMM_ALGO2, CUBLAS_GEMM_ALGO3, CUBLAS_GEMM_ALGO4}) {
     out_algorithms->push_back(algo);
   }
 #endif
