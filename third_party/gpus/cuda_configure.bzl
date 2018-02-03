@@ -477,14 +477,10 @@ def _find_cuda_lib(lib, repository_ctx, cpu_value, basedir, version="",
   """
   file_name = _lib_name(lib, cpu_value, version, static)
   if cpu_value == "Linux":
-    path = repository_ctx.path("%s/lib64/%s" % (basedir, file_name))
+    path = repository_ctx.path("%s/targets/aarch64-linux/lib/%s" % (basedir, file_name))
     if path.exists:
       return struct(file_name=file_name, path=str(path.realpath))
-    path = repository_ctx.path("%s/lib64/stubs/%s" % (basedir, file_name))
-    if path.exists:
-      return struct(file_name=file_name, path=str(path.realpath))
-    path = repository_ctx.path(
-        "%s/lib/x86_64-linux-gnu/%s" % (basedir, file_name))
+    path = repository_ctx.path("%s/targets/aarch64-linux/lib/stubs/%s" % (basedir, file_name))
     if path.exists:
       return struct(file_name=file_name, path=str(path.realpath))
 
@@ -911,7 +907,7 @@ def _create_local_cuda_repository(repository_ctx):
   # symlinking. We create one genrule for each directory we want to track under
   # cuda_toolkit_path
   cuda_toolkit_path = cuda_config.cuda_toolkit_path
-  cuda_include_path = cuda_toolkit_path + "/include"
+  cuda_include_path = cuda_toolkit_path + "/targets/aarch64-linux/include"
   genrules = [_symlink_genrule_for_dir(repository_ctx,
       cuda_include_path, "cuda/include", "cuda-include")]
   genrules.append(_symlink_genrule_for_dir(repository_ctx,
@@ -926,6 +922,8 @@ def _create_local_cuda_repository(repository_ctx):
   for lib in cuda_libs.values():
     cuda_lib_src.append(lib.path)
     cuda_lib_dest.append("cuda/lib/" + lib.file_name)
+  cuda_lib_src.append("libcuda.so")
+  cuda_lib_dest.append("cuda/lib/libcuda.so.1")
   genrules.append(_symlink_genrule_for_dir(repository_ctx, None, "", "cuda-lib",
                                        cuda_lib_src, cuda_lib_dest))
 
