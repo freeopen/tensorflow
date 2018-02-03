@@ -1,0 +1,32 @@
+licenses(["permissive"])
+
+package(default_visibility = ["//visibility:public"])
+
+cc_toolchain_suite(
+    name = "toolchain",
+    toolchains = {
+        "arm|compiler": ":cc-compiler-local",
+        "arm|cuda": ":cc-compiler-local",
+        "k8|compiler": ":cc-compiler-local",
+        "k8|cuda": ":cc-compiler-local",
+    },
+)
+
+filegroup(
+    name = "empty",
+    srcs = [],
+)
+
+cc_toolchain(
+    name = "cc-compiler-local",
+    all_files = ":empty",
+    compiler_files = ":empty",
+    cpu = "local",
+    dwp_files = ":empty",
+    dynamic_runtime_libs = [":empty"],
+    linker_files = ":empty",
+    objcopy_files = ":empty",
+    static_runtime_libs = [":empty"],
+    strip_files = ":empty",
+    supports_param_files = 0,
+)
