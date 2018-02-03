@@ -53,13 +53,17 @@ function main() {
   PKG_NAME_FLAG=""
   GPU_BUILD=0
   NIGHTLY_BUILD=0
+  PLATFORM_FLAG=""
   while true; do
     if [[ "$1" == "--nightly_flag" ]]; then
       NIGHTLY_BUILD=1
     elif [[ "$1" == "--gpu" ]]; then
       GPU_BUILD=1
     elif [[ "$1" == "--gpudirect" ]]; then
-      PKG_NAME_FLAG="--project_name tensorflow_gpudirect"
+        PKG_NAME_FLAG="--project_name tensorflow_gpudirect"
+    elif [[ "$1" == "--platform" ]]; then
+        PLATFORM_FLAG="--plat-name $2"
+        shift
     fi
     shift
 
@@ -165,7 +169,7 @@ function main() {
   pushd ${TMPDIR}
   rm -f MANIFEST
   echo $(date) : "=== Building wheel"
-  "${PYTHON_BIN_PATH:-python}" setup.py bdist_wheel ${PKG_NAME_FLAG} >/dev/null
+  "${PYTHON_BIN_PATH:-python}" setup.py bdist_wheel ${PKG_NAME_FLAG} ${PLATFORM_FLAG} >/dev/null
   mkdir -p ${DEST}
   cp dist/* ${DEST}
   popd
