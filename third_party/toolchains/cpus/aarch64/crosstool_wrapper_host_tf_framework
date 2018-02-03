@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+
+import configparser
+import sys
+import os
+
+from subprocess import call
+from distutils.spawn import find_executable
+
+def get_output_file(args):
+    for i in range(len(args)):
+        if args[i] == '-o':
+            return args[i+1]
+    return None
+
+config_file = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)),
+    '.config'
+)
+
+if not os.path.exists(config_file):
+    print('File', config_file, 'does not exist. Please run configure.py.')
+    sys.exit(1)
+
+config = configparser.ConfigParser()
+config.read(config_file)
+
+cuda_dir = ''
+cudnn_dir = ''
+is_cuda = config['paths']['is_cuda']
+if is_cuda == 'yes':
+    cuda_dir = config['paths']['cuda_dir']
+    cudnn_dir = config['paths']['host_cudnn_dir']
+
+args = sys.argv[1:]
+ofile = get_output_file(args)
+
+cuda_libdirs = []
+tf_libs = []
+
+if ofile is not None:
+    is_gen = ofile.endswith('py_wrappers_cc') or ofile.endswith('gen_cc')
+    if is_cuda == 'yes' and (ofile.endswith('libtensorflow_framework.so') or is_gen):
+        cuda_libdirs = [
+            '-L', '{}/targets/x86_64-linux/lib'.format(cuda_dir),
+            '-L', '{}/targets/x86_64-linux/lib/stubs'.format(cuda_dir),
+            '-L', '{}/lib64'.format(cudnn_dir),
+        ]
+
+    if is_gen:
+        tf_libs += [
+            '-L', 'bazel-out/host/bin/tensorflow',
+            '-ltensorflow_framework'
+        ]
+
+call([find_executable('gcc')] + cuda_libdirs + args + tf_libs)
